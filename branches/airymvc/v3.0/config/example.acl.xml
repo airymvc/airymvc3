@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<access_control>
+    <access_control_exclusion>
+        <module name = "backend">
+            <allow>
+                <controller>admin</controller>
+                    <action>add</action>
+                    <action>get-title</action>
+            </allow> 
+            <allow>
+                <controller>event</controller>
+            </allow>
+        </module>
+        <module name = "default">
+            <allow>
+                <controller>index</controller>
+                    <action>index</action>
+                    <action>eventDetail</action>
+                    <action>search</action>
+            </allow>
+        </module>
+        <module name = "demo">
+            <allow>
+                <controller>demo</controller>
+				<!--<action>content</action>-->
+				<!--<action>testHelloWorld</action>-->
+            </allow>
+            <allow>
+                <controller>index</controller>
+                    <action>index</action>
+                    <action>eventDetail</action>
+                    <action>search</action>
+            </allow>
+        </module>
+    </access_control_exclusion>
+ 
+        
+	<!--authentication data can be distributed in multiple table,
+	role information can also be put in each table; role can be used to
+	control the access right to module or controller-->
+    <mapping_tables>
+        <mapping_table id="1">
+            <!-- this database id is based on the id number from config.ini file -->
+    		<!-- choose the database which you put the authentication information -->
+            <mapping_database_id>db1</mapping_database_id>
+            <name>account</name>
+            <mapping_fields>
+                <user_id>account_id</user_id>
+                <pwd>pwd</pwd>
+                <pwd_encrypt>salt</pwd_encrypt>
+                <!--
+                <role>role</role>
+                <role_set>adm, user, superuser</role_set>
+                -->
+                <is_delete>is_delete</is_delete>
+                <is_delete_value>0</is_delete_value>
+            </mapping_fields>
+            <use_pwd_encryption>1</use_pwd_encryption>
+            <!-- PHP means using PHP function -->
+            <encrytion_option>PHP</encrytion_option>	
+        	<!-- or put the class name here -->
+    		<encrytion_method>md5</encrytion_method>
+        </mapping_table>
+
+        <mapping_table id="2">
+            <mapping_database_id>db1</mapping_database_id>
+            <name>member</name>
+            <mapping_fields>
+                <user_id>account_id</user_id>
+                <pwd>pwd</pwd>
+                <!-- not put salt, then it will be used for checking login -->
+                <!-- role_set maps to the value of the role in database -->
+                <role>role</role>
+                <role_set>adm, user, superuser</role_set>
+                <!-- if use_delete_flag is set, that means we use delete flag to mark deletion -->
+            </mapping_fields>
+        </mapping_table>
+    </mapping_tables>
+    <!-- This one should be a component for users to inherit -->
+    <authentication>
+        <module name="demo">
+        <controller>user-login</controller>
+<!--         Four kinds of actions regarding to authentication
+             (1) check if login 
+             (2) if login error 
+             (3) if need register
+             (4) popup login menu  -->
+                     <!-- if not set, use default actions for that module-->
+                     <!-- in the future, this part should be set in the browse -->
+        <sign_in_action>sign-in</sign_in_action>
+        <login_action>userLogin</login_action>
+        <login_error_action>userLoginError</login_error_action>
+        <other_exclusive_actions>
+        	<action>register</action>
+        	<action>add</action>
+        	<action>sendemail</action>
+        </other_exclusive_actions>
+        <logout_action>loginout</logout_action>
+        </module>
+        <module name="backend">
+        <controller>login</controller>
+        <!-- if not set, use default actions for that module-->
+        </module>
+    </authentication>
+
+    <successful_dispatch><!--if login successful, setup the module, controller and action you forward to ..usually the entry page for the web-->      
+            <module name ="backend">
+            <controller>admin</controller>
+            <action>get-adm</action>
+            </module>
+            <module name ="demo">
+            <controller>test</controller>
+            <action>sucessfulLogin</action>
+            </module>
+    </successful_dispatch>
+    
+    
+    <module_table_mapping>
+        <module name="backend">
+            <ref_map_id>1</ref_map_id>
+        </module>
+         <module name="demo">
+            <ref_map_id>1</ref_map_id>
+        </module>       
+    </module_table_mapping>
+    
+    <access_rules_after_authentication>
+        <module name = "backend">
+            <ref_map_id>1</ref_map_id>
+            <rule>
+                <!-- three types :(1) "only_allow": this is block all only allow module or even to controoler
+                                 (2) "allow_all": block all only allow module or even to controller
+                                 (3) "block_all": allow all only block module or even to controller
+                                 -->
+                <access type="block_all"/>
+            </rule>
+        </module>
+    
+        <module name ="default">
+            <ref_map_id>2</ref_map_id>
+            <rule>
+                <ref_role>adm</ref_role>
+                <access type="block_all">
+                    <module>frontweb</module>
+                </access>
+            </rule>
+            <rule>
+                <ref_role>user1</ref_role>
+                <access type="only_block">
+                    <module>frontweb</module>
+                    <controller>test1</controller>
+                </access>
+            </rule>
+            <rule>
+                <ref_role>superuser1</ref_role>
+                <access type="only_allow">
+                    <module>frontweb</module>
+                    <controller>test2</controller>
+                </access>
+            </rule>
+        </module>
+
+    </access_rules_after_authentication>
+
+</access_control>
