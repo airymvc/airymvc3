@@ -13,6 +13,7 @@ use airymvc\core\Config;
 use airymvc\core\Mvc;
 use airymvc\app\lib\db\SqlDb;
 use airymvc\app\lib\db\MongoDb;
+use airymvc\app\lib\db\DbCopyFarm;
 
 /**
  * This is the controller class that is used for intializing the instance and set variables.
@@ -42,7 +43,10 @@ class AppModel {
 			$this->dbs[] = $database;
 		}
 		if ($config->dbMode() == "copy") {
-			$this->db = new DatabaseFarm($this->dbs);
+			$masterDbConfig = $config->db(0);
+			if ($masterDbConfig["%type"] != "mongo") {
+				$this->db = new SqlDbCopyFarm($this->dbs);
+			}
 		} else {
 			$this->db = $this->dbs[0];
 		}
