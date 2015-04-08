@@ -46,7 +46,7 @@ class SqlDbCopyFarm{
 	 * @param array $columns The columm (field) names in the SQL select query.
 	 * @param string $table The table name in the SQL select query.
 	 * @param boolean $distinct Use distinct or not in the SQL select query.
-	 * @return AbstractAccess
+	 * @return SqlDb
 	 */
 	public function select($columns, $table, $distinct = null) {
 		$this->masterDb->select($columns, $table, $distinct);
@@ -57,7 +57,7 @@ class SqlDbCopyFarm{
 	 * Use to compose SQL WHERE part in a query.
 	 *
 	 * @param array $condition The columm (field) names in the SQL select query.
-	 * @return AbstractAccess
+	 * @return SqlDb
 	 */
 	public function where($condition) {
 		$this->masterDb->where($condition);
@@ -68,7 +68,7 @@ class SqlDbCopyFarm{
 	 * Use to compose SQL WHERE clause for the AND part in a query.
 	 *
 	 * @param string $opString The AND condition text.
-	 * @return AbstractAccess
+	 * @return SqlDb
 	 */
 	public function andWhere($opString) {
 		$this->masterDb->andWhere($opString);
@@ -90,7 +90,7 @@ class SqlDbCopyFarm{
 	 * Use to compose SQL WHERE clause for the IN part in a query.
 	 *
 	 * @param string $opString The IN condition text.
-	 * @return AbstractAccess
+	 * @return SqlDb
 	 */
 	public function inWhere($in) {
 		$this->masterDb->inWhere($in);
@@ -102,7 +102,7 @@ class SqlDbCopyFarm{
 	 *
 	 * @param string $table The table name.
 	 * @param string $condition The condition text.
-	 * @return AbstractAccess
+	 * @return SqlDb
 	 */
 	public function innerJoinOn($table, $condition) {
 		$this->masterDb->innerJoinOn($table, $condition);
@@ -131,7 +131,7 @@ class SqlDbCopyFarm{
 	 *
 	 * @param array $columns The columm (field) names in the SQL select query.
 	 * @param string $table The table name.
-	 * @return AbstractAccess
+	 * @return SqlDb
 	 */
 	public function update($columns, $table) {
 		$this->masterDb->update($columns, $table);
@@ -143,7 +143,7 @@ class SqlDbCopyFarm{
 	 *
 	 * @param array $columns The columm (field) names in the SQL select query.
 	 * @param string $table The table name.
-	 * @return AbstractAccess
+	 * @return SqlDb
 	 */
 	public function insert($columns, $table) {
 		$this->masterDb->insert($columns, $table);
@@ -179,20 +179,12 @@ class SqlDbCopyFarm{
 		$this->masterDb->groupBy($column);
 		return $this;
 	}
-	
-	// 	 /**
-	// 	  * @deprecated Not suggested use.
-	// 	  */
-	// 	 public function joinOn($condition) {
-	// 	 	$this->masterDb->joinOn($condition);
-	// 	 	return $this;
-	// 	 }
-	
+
 	/**
 	 * Use to compose LIMIT part in a SQL
 	 * @param int $offset
 	 * @param int $interval
-	 * @return AbstractAccess
+	 * @return SqlDb
 	 */
 	public function limit($offset, $interval) {
 		$this->masterDb->limit($offset, $interval);
@@ -203,7 +195,7 @@ class SqlDbCopyFarm{
 	 * Use to compose ORDER BY part
 	 * @param string $column  The field is used for ORDER BY.
 	 * @param boolean $ifDesc  Determine if it is DESC order.
-	 * @return AbstractAccess
+	 * @return SqlDb
 	 */
 	public function orderBy($column, $ifDesc = NULL) {
 		$this->masterDb->orderBy($column, $ifDesc);
@@ -216,68 +208,69 @@ class SqlDbCopyFarm{
 	// PDO methods
 	//-------------------------------------------------------
 	
-	/**
-	 * Call PDO::prepare()
-	  * @param string $statement
+   /**
+	* Call PDO::prepare()
+	* @param string $statement
 	* @param array $driverOptions
 	* @return object
 	*/
 	public function prepare($statement, array $driverOptions = array()) {
-	//return a prepareStatement here
+		//return a prepareStatement here
 		return $this->masterDb->prepare($statement, $driverOptions);
 	}
 	
 	/**
 	* Call PDO::beginTransaction()
-	* @return PdoAccess
+	* @return SqlDbCopyFarm
 	*/
 	public function beginTransaction() {
-	$this->masterDb->beginTransaction();
-	return $this;
+		$this->masterDb->beginTransaction();
+		return $this;
 	}
 	
 	/**
 	* Call PDO::rollBack() to roll back the transaction
 	*/
 	public function rollBack() {
-	$this->pdoConn->rollBack();
-	 }
+		$this->pdoConn->rollBack();
+	}
 	
 	 /**
-	 * @return PdoAccess
+	 * @return SqlDbCopyFarm
 	 */
-	 public function commit() {
-	 $this->masterDb->commit();
-	 return $this;
-	 }
+	public function commit() {
+	   $this->masterDb->commit();
+	   return $this;
+	}
 	
-	 /**
-	 * Call PDO::exec()
-	  * @param string $statement
-	  * @return PdoAccess
-	  */
-	  	public function exec($statement = null) {
+   /**
+	* Call PDO::exec()
+	* @param string $statement
+	* @return SqlDbCopyFarm
+	*/
+	public function exec($statement = null) {
+	  	//@TODO: determine which db to be search; update and insert and delete from all the database
 	  	$this->masterDb->exec($statement);
 	  	return $this;
-	  	}
+	}
 	
-	  	/**
-	  	* @param int $attribute
-	  	* @param mixed $value
-	  	* @return PdoAccess
-	  	*/
-	  	public function setAttribute($attribute, $value) {
+   /**
+    * @param int $attribute
+    * @param mixed $value
+    * @return SqlDbCopyFarm
+    */
+	public function setAttribute($attribute, $value) {
 	  	$this->masterDb->setAttribute($attribute, $value);
 	  	return $this;
-	  	}
+	}
 	
-	  	/**
-	  	* @param int $attribute
-	  	* @return mixed
-	  	*/
-	  	public function getAttribute($attribute) {
+   /**
+	* @param int $attribute
+	* @return mixed
+	*/
+	public function getAttribute($attribute) {
 	  	return $this->masterDb->getAttribute($attribute);
-	  	}
+    }
 	
    /**
 	* Call PDO::errorCode()
@@ -290,28 +283,28 @@ class SqlDbCopyFarm{
 	* Call PDO::errorInfo()
 	*/
 	public function errorInfo() {
-	return $this->masterDb->errorInfo();
+		return $this->masterDb->errorInfo();
 	}
 	
    /**
 	* Call PDO::getAvailableDrivers()
 	*/
 	public function getAvailableDrivers() {
-	return $this->masterDb->getAvailableDrivers();
+		return $this->masterDb->getAvailableDrivers();
 	}
 	
    /**
 	* Call PDO::inTransaction()
 	*/
 	public function inTransaction() {
-	return $this->masterDb->inTransaction();
+		return $this->masterDb->inTransaction();
 	}
 	
 	/**
 	* @param string $name
 	*/
 	public function lastInsertId($name = NULL) {
-	return $this->masterDb->lastInsertId($name = NULL);
+		return $this->masterDb->lastInsertId($name = NULL);
 	}
 	
 	/**
@@ -322,7 +315,7 @@ class SqlDbCopyFarm{
 	*/
 	public function query($statement, $fetchType = NULL, $fetch = NULL, array $ctorargs = NULL) {
 		return $this->masterDb->query($statement, $fetchType, $fetch, $ctorargs);
-		}
+	}
 	
 	/**
 	* @param string $str
@@ -333,9 +326,10 @@ class SqlDbCopyFarm{
 	}
 	
 	/**
-	* @see AbstractAccess::execute()
+	* @see SqlDb::execute()
 	*/
 	public function execute($statement = NULL, $fetchType = NULL, $fetch = NULL, array $ctorargs = NULL) {
+		//@TODO: algorithm to decide which one to search
 		return $this->masterDb->execute($statement, $fetchType, $fetch, $ctorargs);
 	}
 	
