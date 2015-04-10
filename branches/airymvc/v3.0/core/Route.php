@@ -73,7 +73,7 @@ class Route{
 		if (!is_null($app)) {
 			$mvcVal = new MvcValue();
 			$mvcVal->setNames($app->relativePath(), $app->name(), $uelem[1], Route::fromHyphenToCamelCase($uelem[2], TRUE), Route::fromHyphenToCamelCase($uelem[3]));
-			for ($i=4; $i<count($uelem)-4; $i=$i+2) {
+			for ($i=4; $i<count($uelem); $i=$i+2) {
 			     $uelem[$i+1] = isset($uelem[$i+1]) ? $uelem[$i+1] : NULL;
 			     $request->setParam($uelem[$i],  $uelem[$i+1]);
 			     $request->setGETParam($uelem[$i],  $uelem[$i+1]);
