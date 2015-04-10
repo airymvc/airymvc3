@@ -69,15 +69,20 @@ class Bootstrap {
 		
 		//process routing table here
 		$table = array();
+		$routeParams = array();
 		foreach ($configArray['%routes'] as $routeUrl => $routeVar) {
 			if (isset($apps[$routeVar[0]])) {
 				$appObj = $apps[$routeVar[0]];
 				$mvcValue = new MvcValue();
 				$mvcValue->setNames($appObj->relativePath(), $routeVar[0], $routeVar[1], Route::fromHyphenToCamelCase($routeVar[2], TRUE), Route::fromHyphenToCamelCase($routeVar[3]));
 				$table[$routeUrl] = $mvcValue;
+				if (isset($routeVar[4])) {
+					$routeParams[$routeUrl] = $routeVar[4];
+				}
 			}
 		}
 		Route::$routingTable = $table;
+		Route::$routingParams = $routeParams;
 
 		include "AutoLoader.php";
 

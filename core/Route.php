@@ -22,9 +22,15 @@ use airymvc\core\Application;
 class Route{
 
 	public static $routingTable;
+	
+	public static $routingParams;
 
 	public static function routingTable() {
 		return Route::$routingTable;
+	}
+	
+	public static function routingParams() {
+		return Route::$routingParams;
 	}
 		
 	public static function resolveRoute($request) {
@@ -33,7 +39,7 @@ class Route{
 		//get the match URI
 		foreach (Route::routingTable() as $route => $mvc) {
 			$pos = strpos($request->requestURI(), $route);
-			if ($pos !== FALSE) {
+			if ($pos !== FALSE && $pos == 0) {
 				$runMvc = $mvc;
 				$matchRoute = $route;
 				break;
@@ -42,23 +48,43 @@ class Route{
 
 		//Has matches of routing table; set the parameters in the request
 		if (!is_null($runMvc) && !is_null($matchRoute)) {
-			$restURI = str_replace($matchRoute, "", $request->requestURI());
+			$idx = strlen($matchRoute);
+			$restURI = substr($request->requestURI(), $idx);
 			if (substr($restURI, 0, 1) == "/") {
 				$restURI = substr($restURI, 1);
 			}
+
 			$uriParts = explode("/", $restURI);
 			if (count($uriParts) >= 2) {
-				for ($i=1; $i<count($uriParts); $i=$i+2) {
+				for ($i=0; $i<count($uriParts); $i=$i+2) {
 					$uriParts[$i+1] = isset($uriParts[$i+1]) ? $uriParts[$i+1] : NULL;
 					$request->setParam($uriParts[$i],  $uriParts[$i+1]);
 					$request->setGETParam($uriParts[$i],  $uriParts[$i+1]);
 				}
 			}
+			$routeParameters = Route::routingParams();
+			if (isset($routeParameters[$matchRoute])) {
+				//case #1: ?key1=value1&key2=value2
+				$options = ltrim($routeParameters[$matchRoute], "?");
+				$kvs = explode("&", $options);
+				foreach ($kvs as $kv) {
+					$kvParts = explode("=", $kv);
+					$request->setParam($kvParts[0],  $kvParts[1]);
+					$request->setGETParam($kvParts[0],  $kvParts[1]);
+				}
+				//case #2: /key1/value1/key2/value2
+				$options = ltrim($routeParameters[$matchRoute], "/");
+				$elems = explode("/", $options);
+				for ($i=0; $i<count($elems); $i=$i+2) {
+					$request->setParam($elems[$i],  $elems[$i+1]);
+					$request->setGETParam($elems[$i],  $elems[$i+1]);					
+				}
+				
+			}
 
 			return array("mvc" => $runMvc, "request"=> $request);
 		} 
-		
-		
+
 		//No matching route - start from app name; transform directive to MVC and params
 		$trimUri = ltrim($request->requestURI(), "/");
 		$uelem= explode("/", $trimUri);
