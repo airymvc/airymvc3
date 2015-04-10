@@ -1,113 +1,121 @@
 {
-  "%applications": [
-    {
-      "project_name_value": [
-        "host",
-        "document_root_folder",
-        "relative_path_to_host"
-      ]
-    },
-    {
-      "airy3_test1": [
-        "ubu00.airy3_test1",
-        "/var/www/airy3_test1",
-        "/"
-      ]
-    },
-    {
-      "medisys": [
-        "ubu00.medisys",
-        "/var/www/medisys",
-        "/"
-      ]
-    }
-  ],
-  "%routes": {
-    "/abc/def/fff": [
-      "airy3_test1",
-      "demo",
-      "index",
-      "hello-world"
+    "%applications":[
+        {
+            "project_name_value":[
+                "host",
+                "document_root_folder",
+                "relative_path_to_host"
+            ]
+        },
+        {
+            "airy3_test1":[
+                "ubu00.airy3_test1",
+                "/var/www/airy3_test1",
+                "/"
+            ]
+        },
+        {
+            "medisys":[
+                "ubu00.medisys",
+                "/var/www/medisys",
+                "/"
+            ]
+        }
     ],
-    "/abc/def/ddd": [
-      "airy3_test1",
-      "demo",
-      "index",
-      "echoHelloWorld"
-    ]
-  },
-  "%application_configs": [
-    {
-      "%name": "airy3_test1",
-      "%db_mode" : "copy",
-      "%db": [
-        {
-          "%database": "demo0",
-          "%type": "mysql",
-          "%encoding": "utf8",
-          "%host": "localhost:3306",
-          "%id": "root",
-          "%pwd": "root"
-        },
-        {
-          "%database": "demo1",
-          "%type": "mysql",
-          "%encoding": "utf8",
-          "%host": "localhost:3306",
-          "%id": "root",
-          "%pwd": "root"
-        }
-      ],
-      "%display_error": "disable",
-      "%templates": [
-        {
-          "%template": "tpl_filename",
-          "%key_value": "tpl_map_filename",
-          "%map_url_param": "map",
-          "%views": [
-            [
-              "moduleName",
-              "controllerName",
-              "actionName"
-            ],
-            [
-              "module1"
-            ],
-            [
-              "module2",
-              "controller2"
-            ]
-          ]
-        },
-        {
-          "%template": "common.php",
-          "%key_value": "all_map.json",
-          "%map_url_param": "map",
-          "%views": [
-            [
-              "demo",
-              "index",
-              "hello-world"
-            ]
-          ]
-        }
-      ]
+    "%routes":{
+        "/abc/def/fff":[
+            "airy3_test1",
+            "demo",
+            "index",
+            "hello-world"
+        ],
+        "/abc/def/ddd":[
+            "airy3_test1",
+            "demo",
+            "index",
+            "echoHelloWorld"
+        ],
+        "/patient_data":[
+            "medisys",
+            "ws",
+            "api",
+            "get",
+            "tbl=patient_data"
+        ]
     },
-    {
-      "%name": "medisys",
-      "%db": [
+    "%application_configs":[
         {
-          "%database": "medisys",
-          "%type": "mysql",
-          "%encoding": "utf8",
-          "%host": "localhost:3306",
-          "%id": "root",
-          "%pwd": "root"
+            "%name":"airy3_test1",
+            "%db_mode":"copy",
+            "%db":[
+                {
+                    "%database":"demo0",
+                    "%type":"mysql",
+                    "%encoding":"utf8",
+                    "%host":"localhost:3306",
+                    "%id":"root",
+                    "%pwd":"root"
+                },
+                {
+                    "%database":"demo1",
+                    "%type":"mysql",
+                    "%encoding":"utf8",
+                    "%host":"localhost:3306",
+                    "%id":"root",
+                    "%pwd":"root"
+                }
+            ],
+            "%display_error":"disable",
+            "%templates":[
+                {
+                    "%template":"tpl_filename",
+                    "%key_value":"tpl_map_filename",
+                    "%map_url_param":"map",
+                    "%views":[
+                        [
+                            "moduleName",
+                            "controllerName",
+                            "actionName"
+                        ],
+                        [
+                            "module1"
+                        ],
+                        [
+                            "module2",
+                            "controller2"
+                        ]
+                    ]
+                },
+                {
+                    "%template":"common.php",
+                    "%key_value":"all_map.json",
+                    "%map_url_param":"map",
+                    "%views":[
+                        [
+                            "demo",
+                            "index",
+                            "hello-world"
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "%name":"medisys",
+            "%db":[
+                {
+                    "%database":"medisys",
+                    "%type":"mysql",
+                    "%encoding":"utf8",
+                    "%host":"localhost:3306",
+                    "%id":"root",
+                    "%pwd":"root"
+                }
+            ],
+            "%display_error":"disable",
+            "%templates":[
+                
+            ]
         }
-      ],
-      "%display_error": "disable",
-      "%templates": [
-      ]
-    }
-  ]
+    ]
 }
