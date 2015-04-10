@@ -60,8 +60,15 @@ class AppView {
          */
 		public function render() {
            try {
-
-                if (file_exists(Mvc::viewFile())) {
+           		$viewElems = explode(DIRECTORY_SEPARATOR, Mvc::viewFile());
+           		$viewElems[3] = lcfirst($viewElems[3]);
+           		$viewElems[4] = lcfirst($viewElems[4]);
+				$fallBackViewFile = join(DIRECTORY_SEPARATOR, $viewElems);
+				$viewFile = Mvc::viewFile();
+				if (!file_exists($viewFile)) {
+					$viewFile = $fallBackViewFile;
+				}
+                if (file_exists($viewFile)) {
                 	$templateScript = ""; 
                 	$viewKey = NULL;
                 	if (!is_null($this->template)) {
@@ -72,7 +79,7 @@ class AppView {
                 	
 
                 	
-                    $viewContent = file_get_contents(Mvc::viewFile());
+                    $viewContent = file_get_contents($viewFile);
                     
                     if (!is_null($viewKey)) {
                     	$viewContent = str_replace("%{".$viewKey."}%", $viewContent, $templateScript);
@@ -93,7 +100,7 @@ class AppView {
                     include "airy.view://view_content";
 
                 } else {
-                    throw new AiryException("No View File {Mvc::viewFile()} Existed.");
+                    throw new AiryException("No View File {$viewFile} Existed.");
                 }
             } catch (Exception $e) {
                 echo 'Exception: ',  $e->getMessage(), "\n";

@@ -1,7 +1,7 @@
 {
   "%applications": [
     {
-      "project_name": [
+      "project_name_value": [
         "host",
         "document_root_folder",
         "relative_path_to_host"
@@ -11,6 +11,13 @@
       "airy3_test1": [
         "ubu00.airy3_test1",
         "/var/www/airy3_test1",
+        "/"
+      ]
+    },
+    {
+      "medisys": [
+        "ubu00.medisys",
+        "/var/www/medisys",
         "/"
       ]
     }
@@ -84,6 +91,22 @@
             ]
           ]
         }
+      ]
+    },
+    {
+      "%name": "medisys",
+      "%db": [
+        {
+          "%database": "medisys",
+          "%type": "mysql",
+          "%encoding": "utf8",
+          "%host": "localhost:3306",
+          "%id": "root",
+          "%pwd": "root"
+        }
+      ],
+      "%display_error": "disable",
+      "%templates": [
       ]
     }
   ]
