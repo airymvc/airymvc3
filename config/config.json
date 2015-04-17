@@ -25,7 +25,6 @@
     "%application_configs":[
         {
             "%name":"airy3_test1",
-            "%db_mode":"copy",
             "%db":[
                 {
                     "%database":"demo0",
