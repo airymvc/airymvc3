@@ -27,12 +27,24 @@ class Application{
 	 protected $serverName;
 	 
 	 protected $config;
+	 
+	 protected $appConfigFile;
      
      public function __construct($name, $serverName, $documentRoot, $path) {
      	$this->setName($name);
      	$this->setServerName($serverName);
      	$this->setDocumentRoot($documentRoot);
      	$this->setRelativePath($path);
+     	
+     	//set application config file 
+     	$appConfigFile1 = $this->documentRoot . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "config.json";
+     	$appConfigFile2 = $this->documentRoot . DIRECTORY_SEPARATOR . "config.json";
+
+     	if (file_exists($appConfigFile1)) {
+     		$this->appConfigFile($appConfigFile1);
+     	} else if (file_exists($appConfigFile2)) {
+     		$this->appConfigFile($appConfigFile2);
+     	}
      }
      
      public function setName($name) {
@@ -71,6 +83,15 @@ class Application{
 		$config = new Config($configArray);
 		$this->config = $config;
 		return $this;
+	}
+	
+	public function appConfigFile($file = NULL) {
+		//get method
+		if (is_null($file)) {
+			return $this->appConfigFile;
+		}
+		//set method
+		$this->appConfigFile = $file;
 	}
 	
 }

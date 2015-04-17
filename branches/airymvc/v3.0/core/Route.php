@@ -64,21 +64,29 @@ class Route{
 			}
 			$routeParameters = Route::routingParams();
 			if (isset($routeParameters[$matchRoute])) {
+				$useEqual = FALSE;
 				//case #1: ?key1=value1&key2=value2
 				$options = ltrim($routeParameters[$matchRoute], "?");
 				$kvs = explode("&", $options);
 				foreach ($kvs as $kv) {
 					$kvParts = explode("=", $kv);
-					$request->setParam($kvParts[0],  $kvParts[1]);
-					$request->setGETParam($kvParts[0],  $kvParts[1]);
+					if (count($kvParts) > 1) {
+						$request->setParam($kvParts[0],  $kvParts[1]);
+						$request->setGETParam($kvParts[0],  $kvParts[1]);
+						$useEqual = TRUE;
+					}
 				}
 				//case #2: /key1/value1/key2/value2
-				$options = ltrim($routeParameters[$matchRoute], "/");
-				$elems = explode("/", $options);
-				for ($i=0; $i<count($elems); $i=$i+2) {
-					$request->setParam($elems[$i],  $elems[$i+1]);
-					$request->setGETParam($elems[$i],  $elems[$i+1]);					
-				}
+				if (!$useEqual) {
+				    $options = ltrim($routeParameters[$matchRoute], "/");
+			   	    $elems = explode("/", $options);
+				    if (count($elems) > 1) {
+				        for ($i=0; $i<count($elems); $i=$i+2) {
+					         $request->setParam($elems[$i],  $elems[$i+1]);
+					       	 $request->setGETParam($elems[$i],  $elems[$i+1]);					
+				        }
+				    }
+			     }
 				
 			}
 

@@ -41,6 +41,7 @@ class Bootstrap {
     	
 		$names = array();
 		$apps = array();
+		$allAppRoutes = array();
 		foreach ($configArray['%applications'] as $application) {
 			$keys = array_keys($application);
 			$names[] = $keys[0];
@@ -54,30 +55,58 @@ class Bootstrap {
 			}
 			$app = new Application($keys[0], $serverName, $docRoot, $pathName);
 			
-			//Get the application config
-			foreach ($configArray["%application_configs"] as $appConfigArray) {
-				if ($appConfigArray["%name"] == $keys[0]) {
-					$app->setConfig($appConfigArray);
-				}
+			//** Get the application's application config
+			$appSpecificConfigArray = NULL;
+			if (!is_null($app->appConfigFile())) {
+				$appSpecificConfigArray = json_decode(file_get_contents($app->appConfigFile()), TRUE);
 			}
 
+			//Get the framework's application config
+			$finalAppConfigArray = array();
+			foreach ($configArray["%application_configs"] as $appConfigArray) {
+				if ($appConfigArray["%name"] == $keys[0]) {					
+					$finalAppConfigArray = $appConfigArray;
+				}
+			}
+		
+			//Overwrite the application_configs by application's config array
+			if (isset($appSpecificConfigArray['%application_configs']) && isset($appSpecificConfigArray['%application_configs'][0])) {
+				$finalAppConfigArray = array_replace_recursive($finalAppConfigArray, $appSpecificConfigArray['%application_configs'][0]);
+			}
+			
+			$app->setConfig($finalAppConfigArray);
 			$apps[$keys[0]] = $app;
+			
+			
+			//Get all routes from application specific config
+			if (isset($appSpecificConfigArray["%routes"])) {
+				$allAppRoutes = array_replace_recursive($allAppRoutes, $appSpecificConfigArray["%routes"]);
+			}
+
 		}
+
 		Framework::$appNames = $names;
 		Framework::$apps = $apps;
-		
-		
+
 		//process routing table here
 		$table = array();
 		$routeParams = array();
-		foreach ($configArray['%routes'] as $routeUrl => $routeVar) {
-			if (isset($apps[$routeVar[0]])) {
-				$appObj = $apps[$routeVar[0]];
-				$mvcValue = new MvcValue();
-				$mvcValue->setNames($appObj->relativePath(), $routeVar[0], $routeVar[1], Route::fromHyphenToCamelCase($routeVar[2], TRUE), Route::fromHyphenToCamelCase($routeVar[3]));
-				$table[$routeUrl] = $mvcValue;
-				if (isset($routeVar[4])) {
-					$routeParams[$routeUrl] = $routeVar[4];
+		
+		if (isset($configArray['%routes'])) {
+			//overwrite the routes
+			$allRoutes = $configArray['%routes'];
+			if (!empty($allAppRoutes)) {
+				$allRoutes = array_replace_recursive($configArray['%routes'], $allAppRoutes);
+			}
+			foreach ($allRoutes as $routeUrl => $routeVar) {
+				if (isset($apps[$routeVar[0]])) {
+					$appObj = $apps[$routeVar[0]];
+					$mvcValue = new MvcValue();
+					$mvcValue->setNames($appObj->relativePath(), $routeVar[0], $routeVar[1], Route::fromHyphenToCamelCase($routeVar[2], TRUE), Route::fromHyphenToCamelCase($routeVar[3]));
+					$table[$routeUrl] = $mvcValue;
+					if (isset($routeVar[4])) {
+						$routeParams[$routeUrl] = $routeVar[4];
+					}
 				}
 			}
 		}
