@@ -6,6 +6,13 @@
                 "/var/www/airy3_test1",
                 "/"
             ]
+        },
+        {
+            "medisys":[
+                "ubu00.medisys",
+                "/var/www/medisys",
+                "/"
+            ]
         }
     ],
     "%routes":{
