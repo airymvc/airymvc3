@@ -19,6 +19,12 @@ use airymvc\app\lib\db\DbInterface;
  */
 class MongoDb implements DbInterface {
 	
+	
+	const MONGO_CURSOR           = "mongo_cursor";
+	const BOTH_INDEX_KEY_STRING	 = "both_index_key_string";
+	const KEY_STRING	         = "key_string";
+	const INDEX	                 = "index";
+	
 	/**
 	 * @var array $dbConfig
 	 */
@@ -145,11 +151,12 @@ class MongoDb implements DbInterface {
     	
 		$host = !is_null($host) ? $host : $this->dbConfig['%host'];
 		$userid = !is_null($userid) ? $userid : $this->dbConfig['%id'];
-		$passwd = !is_null($passwd) ? $passwd : $this->dbConfig['%pwd'];		
+		$passwd = !is_null($passwd) ? $passwd : $this->dbConfig['%pwd'];	
+		$database = $this->dbConfig['%database'];
 		$userPassword = "{$userid}:{$passwd}@";
 
-		$this->mongoClient = new \MongoClient("mongodb://{$userPassword}{$host}/");
-		$this->mongoClient->selectDB();
+		$this->mongoClient = new \MongoClient("mongodb://{$userPassword}{$host}");
+		$this->database = $this->selectDB($database);
     }
 
     
@@ -224,7 +231,7 @@ class MongoDb implements DbInterface {
     }
 
     /**
-     * @param string $collection
+     * @param string $collection (database table)
      * @param array $columns
      * @param array $criteria
      * @return object Query result.
@@ -307,6 +314,7 @@ class MongoDb implements DbInterface {
     			$this->distinctPart = array("distinct" => "{$collection}", "key" => "{$colElements[0]}");
     		}   		
     	}
+    	$this->dbCollection = $collection;
     	$this->selectPart = $selectArray;
     	return $this;
     }
@@ -462,11 +470,12 @@ class MongoDb implements DbInterface {
      * Aggregate each SQL statement part and execute the command
      * @return multitype
      */
-    public function execute() {
+    public function execute($option = self::INDEX) {
     	$table = $this->dbCollection;
     	
         switch ($this->queryType) {
-            case "SELECT":    	
+            case "SELECT":
+            	$queryResult = NULL;
             	if (empty($this->distinctPart)) {
 					$select = $this->database->$table->find($this->wherePart, $this->selectPart);
 					if (!empty($this->limitPart)) {
@@ -478,10 +487,32 @@ class MongoDb implements DbInterface {
 					if (!empty($this->orderPart)) {
 						$select = $select->sort($this->orderPart);
 					}
-					return $select;
-            	} else {
-            		return $this->database->$table->command($this->distinctPart);
+					$queryResult = $select;
+            	} else {		
+            		$queryResult = $this->database->$table->command($this->distinctPart);
             	}
+
+            	if ($option == self::MONGO_CURSOR) {
+            		return $queryResult;
+            	}
+            	
+            	$returnArray = array();
+            	/**
+            	 * 	BOTH_INDEX_KEY_STRING	 = "both_index_key_string";
+	             *  KEY_STRING	             = "key_string";
+	             *  INDEX	                 = "index";
+            	 */
+            	foreach ($queryResult as $doc) {
+            		if ($option == self::BOTH_INDEX_KEY_STRING || $option == self::INDEX) {
+            			$doc["__id"] = $doc["_id"]->__toString();
+            			$returnArray[] = $doc;
+            		}
+            		if ($option == self::BOTH_INDEX_KEY_STRING || $option == self::KEY_STRING) {
+            			$returnArray[$doc["_id"]->__toString()] = $doc;
+            		}
+            	}
+            	return $returnArray;
+            	
                 break;
             case "UPDATE":
             	return $this->database->$table->update($where, array('$set' => $columns));
@@ -500,7 +531,7 @@ class MongoDb implements DbInterface {
     public function cleanAll(){
     	$this->queryType    = NULL;
     	$this->selectPart   = NULL;
-    	$this->wherePart    = NULL;
+    	$this->wherePart    = array();
     	$this->orderPart    = NULL;
     	$this->limitPart    = NULL;
     	$this->offsetPart   = NULL;

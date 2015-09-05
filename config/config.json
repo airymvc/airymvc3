@@ -13,6 +13,13 @@
                 "/var/www/medisys",
                 "/"
             ]
+        },
+        {
+            "rtshm":[
+                "ubu00.shm",
+                "/var/www/rtshm",
+                "/"
+            ]
         }
     ],
     "%routes":{

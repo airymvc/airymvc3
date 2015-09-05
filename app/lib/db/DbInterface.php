@@ -68,9 +68,9 @@ interface DbInterface {
     
     
     /**
-     * @param string $statement
+     * @param string $option
      */
-    public function execute($statement = NULL);
+    public function execute($option = NULL);
     
     /**
      *  Get the SQL statement.
