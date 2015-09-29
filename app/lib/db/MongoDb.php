@@ -329,6 +329,9 @@ class MongoDb implements DbInterface {
      */
     public function where($condition) {
     	if (is_array($condition)) {
+    		if (isset($condition['_id'])) {
+    			$condition['_id'] = new \MongoId($condition['_id']);
+    		}
     		$this->wherePart = $condition;
     	}
     	//@TODO: do a string operation to convert the string to be a where array
@@ -471,13 +474,20 @@ class MongoDb implements DbInterface {
      * @return multitype
      */
     public function execute($option = self::INDEX) {
+        $useFineOne = FALSE;
     	$table = $this->dbCollection;
     	
         switch ($this->queryType) {
             case "SELECT":
             	$queryResult = NULL;
             	if (empty($this->distinctPart)) {
-					$select = $this->database->$table->find($this->wherePart, $this->selectPart);
+            		//@NOTE: When querying with _id, means the Mongo ObjectId will be used. Need to call fineOne.
+            		if (isset($this->wherePart['_id'])) {
+            			$select = $this->database->$table->findOne($this->wherePart, $this->selectPart);
+                        $useFineOne = TRUE;
+            		} else {
+						$select = $this->database->$table->find($this->wherePart, $this->selectPart);
+            		}
 					if (!empty($this->limitPart)) {
 						$select = $select->limit($this->limitPart);
 					}
@@ -497,6 +507,13 @@ class MongoDb implements DbInterface {
             	}
             	
             	$returnArray = array();
+
+                if ($useFineOne) {
+                    $queryResult["_idString"] = $queryResult["_id"]->__toString();
+                    $returnArray[] = $queryResult;
+                    return $returnArray;
+                }
+
             	/**
             	 * 	BOTH_INDEX_KEY_STRING	 = "both_index_key_string";
 	             *  KEY_STRING	             = "key_string";
@@ -504,7 +521,7 @@ class MongoDb implements DbInterface {
             	 */
             	foreach ($queryResult as $doc) {
             		if ($option == self::BOTH_INDEX_KEY_STRING || $option == self::INDEX) {
-            			$doc["__id"] = $doc["_id"]->__toString();
+            			$doc["_idString"] = $doc["_id"]->__toString();
             			$returnArray[] = $doc;
             		}
             		if ($option == self::BOTH_INDEX_KEY_STRING || $option == self::KEY_STRING) {
