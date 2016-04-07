@@ -354,6 +354,7 @@ class MongoDb implements DbInterface {
     		}
     		return $dbConnection->update($where, array('$set' => $columns), $options);
     	}
+    	
     	//Compatiable part
     	$this->queryType = "UPDATE";
     	$this->dbCollection = $collection;
@@ -532,7 +533,7 @@ class MongoDb implements DbInterface {
             	
                 break;
             case "UPDATE":
-            	return $this->database->$table->update($where, array('$set' => $columns));
+            	return $this->database->$table->update($this->wherePart, $this->updatePart);
                 break;
             case "INSERT":
             	return $this->database->$table->insert($document);
