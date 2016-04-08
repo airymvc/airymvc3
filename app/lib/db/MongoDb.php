@@ -536,7 +536,7 @@ class MongoDb implements DbInterface {
             	return $this->database->$table->update($this->wherePart, $this->updatePart);
                 break;
             case "INSERT":
-            	return $this->database->$table->insert($document);
+            	return $this->database->$table->insert($this->insertPart);
                 break;
             case "DELETE":
             	return $this->database->$table->remove($this->wherePart);
