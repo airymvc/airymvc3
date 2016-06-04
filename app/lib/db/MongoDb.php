@@ -96,6 +96,13 @@ class MongoDb implements DbInterface {
 	protected $queryType;
 	
 	/**
+	 * The last insert Id
+	 * @var string $lastInsertId
+	 */
+	
+	protected $lastInsertId;
+	
+	/**
 	 * @param string $key
 	 * @return string|array
 	 */
@@ -536,7 +543,12 @@ class MongoDb implements DbInterface {
             	return $this->database->$table->update($this->wherePart, $this->updatePart);
                 break;
             case "INSERT":
-            	return $this->database->$table->insert($this->insertPart);
+            	if ($this->database->$table->insert($this->insertPart)) {
+            		$this->lastInsertId = $this->insertPart['_id'];
+            		return $this->insertPart['_id'];
+            	} else {
+            		$this->database->$table->insert($this->insertPart);
+            	}
                 break;
             case "DELETE":
             	return $this->database->$table->remove($this->wherePart);
@@ -596,6 +608,14 @@ class MongoDb implements DbInterface {
      */
     public function groupBy($column) {
     	return $this;
+    }
+    
+    /**
+     * Get the last insert id 
+     * @return string
+     */
+    public function lastInsertId() {
+    	return $this->lastInsertId;
     }
     
 }
