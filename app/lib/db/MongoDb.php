@@ -579,14 +579,14 @@ class MongoDb implements DbInterface {
      * @see DbAccessInterface::andWhere()
      */
     public function andWhere($opString) {
-    	return $this->where($condition);
+    	return $this->where($opString);
     }
     /**
      * (non-PHPdoc)
      * @see DbAccessInterface::orWhere()
      */
     public function orWhere($opString) {
-    	return $this->where($condition);
+    	return $this->where($opString);
     }
     /**
      * (non-PHPdoc)
