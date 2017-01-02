@@ -13,6 +13,7 @@ use airymvc\core\Config;
 use airymvc\core\Mvc;
 use airymvc\app\lib\db\SqlDb;
 use airymvc\app\lib\db\MongoDb;
+use airymvc\app\lib\db\MongoDbV7;
 use airymvc\app\lib\db\SqlDbCopyFarm;
 
 /**
@@ -37,7 +38,12 @@ class AppModel {
 			if ($dbConfig["%type"] != "mongo") {
 				$database = new SqlDb();
 			} else {
-				$database = new MongoDb();
+				if (version_compare(PHP_VERSION, '5.6.99') <= 0) {
+					$database = new MongoDb();
+				} else {
+					$database = new MongoDbV7();
+				}
+				
 			}
 			$database->initDb($dbConfig);
 			$this->dbs[] = $database;
