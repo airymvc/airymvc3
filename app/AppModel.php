@@ -38,6 +38,8 @@ class AppModel {
 			if ($dbConfig["%type"] != "mongo") {
 				$database = new SqlDb();
 			} else {
+				error_log(PHP_VERSION);
+				error_log(version_compare(PHP_VERSION, '5.6.99'));
 				if (version_compare(PHP_VERSION, '5.6.99') <= 0) {
 					$database = new MongoDb();
 				} else {
