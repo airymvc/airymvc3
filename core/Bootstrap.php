@@ -59,6 +59,9 @@ class Bootstrap {
 			$appSpecificConfigArray = NULL;
 			if (!is_null($app->appConfigFile())) {
 				$appSpecificConfigArray = json_decode(file_get_contents($app->appConfigFile()), TRUE);
+				if (empty($appSpecificConfigArray)) {
+					error_log("JSON Decode Error for application specific config file - " . $app->appConfigFile());
+				}
 			}
 
 			//Get the framework's application config
