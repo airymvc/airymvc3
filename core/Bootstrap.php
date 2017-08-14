@@ -42,6 +42,7 @@ class Bootstrap {
 		$names = array();
 		$apps = array();
 		$allAppRoutes = array();
+		$allAppRoutesNoOverwritten = array();
 		foreach ($configArray['%applications'] as $application) {
 			$keys = array_keys($application);
 			$names[] = $keys[0];
@@ -83,6 +84,18 @@ class Bootstrap {
 			
 			//Get all routes from application specific config
 			if (isset($appSpecificConfigArray["%routes"])) {
+				foreach ($appSpecificConfigArray["%routes"] as $route => $appRoute) {
+					if (isset($allAppRoutesNoOverwritten[$route])) {
+						$existAppNames = $allAppRoutesNoOverwritten[$route]['application'];
+						$existAppNames[] = $appRoute[0];
+						$allAppRoutesNoOverwritten[$route]['application'] = $existAppNames;
+						$allAppRoutesNoOverwritten[$route]['path'][$appRoute[0]] = $appRoute;
+					} else {
+						$allAppRoutesNoOverwritten[$route] = array("application" => array($appRoute[0]), 
+								                                   "path"=> array($appRoute[0] => $appRoute)
+						                                          );
+					}
+				}
 				$allAppRoutes = array_replace_recursive($allAppRoutes, $appSpecificConfigArray["%routes"]);
 			}
 
@@ -95,26 +108,70 @@ class Bootstrap {
 		$table = array();
 		$routeParams = array();
 		
+		//var_dump($allAppRoutesNoOverwritten);
+		//error_log(print_r($allAppRoutes, true));
+		
+		$allRoutes = array();
 		if (isset($configArray['%routes'])) {
 			//overwrite the routes
-			$allRoutes = $configArray['%routes'];
-			if (!empty($allAppRoutes)) {
-				$allRoutes = array_replace_recursive($configArray['%routes'], $allAppRoutes);
+			foreach ($configArray["%routes"] as $route => $appRoute) {
+				if (isset($allRoutes[$route])) {
+					$existAppNames = $allRoutes[$route]['application'];
+					$existAppNames[] = $appRoute[0];
+					$allRoutes[$route]['application'] = $existAppNames;
+					$allRoutes[$route]['path'][$appRoute[0]] = $appRoute;
+				} else {
+					$allRoutes[$route] = array("application" => array($appRoute[0]),
+							                   "path"=> array($appRoute[0] => $appRoute)
+						);
+				}
 			}
-			foreach ($allRoutes as $routeUrl => $routeVar) {
-				if (isset($apps[$routeVar[0]])) {
-					$appObj = $apps[$routeVar[0]];
-					$mvcValue = new MvcValue();
-					$mvcValue->setNames($appObj->relativePath(), $routeVar[0], $routeVar[1], Route::fromHyphenToCamelCase($routeVar[2], TRUE), Route::fromHyphenToCamelCase($routeVar[3]));
-					$table[$routeUrl] = $mvcValue;
-					if (isset($routeVar[4])) {
-						$routeParams[$routeUrl] = $routeVar[4];
+
+			if (!empty($allAppRoutesNoOverwritten)) {
+				foreach ($allAppRoutesNoOverwritten as $route => $routeInfo) {
+					if (isset($allRoutes[$route])) {
+						foreach ($routeInfo['path'] as $appName => $routePath) {
+							//overwritten by application specific route (config file)
+							if (isset($allRoutes[$route]['path'][$appName])) {
+								$allRoutes[$route]['path'][$appName] = $routePath;
+							} else {
+								$existAppNames = $allRoutes[$route]['application'];
+								$existAppNames[] = $appName;
+								$allRoutes[$route]['application'] = $existAppNames;
+								$allRoutes[$route]['path'][$appName] = $routePath;							
+							}
+						}
+					} else {
+						$allRoutes[$route] = $routeInfo;
+					}
+				}				
+			}
+			
+			//var_dump($allRoutes);
+			//var_dump($apps);
+			
+			foreach ($allRoutes as $routeUrl => $allRouteVar) {
+				foreach ($allRouteVar['application'] as $appName) {
+					if (isset($apps[$appName])) {
+						$appObj = $apps[$appName];
+						$routeVar = $allRouteVar['path'][$appName];
+						$mvcValue = new MvcValue();
+						$mvcValue->setNames($appObj->relativePath(), $routeVar[0], $routeVar[1], Route::fromHyphenToCamelCase($routeVar[2], TRUE), Route::fromHyphenToCamelCase($routeVar[3]));
+						$table[$routeUrl] = $mvcValue;
+						$table[$appName.$routeUrl] = $mvcValue;
+						if (isset($routeVar[4])) {
+						    $routeParams[$routeUrl] = $routeVar[4];
+						    $routeParams[$appName.$routeUrl] = $routeVar[4];
+						}
 					}
 				}
 			}
 		}
 		Route::$routingTable = $table;
 		Route::$routingParams = $routeParams;
+		
+		//var_dump(Route::$routingTable);
+		//var_dump(Route::$routingParams);
 
 		include "AutoLoader.php";
 

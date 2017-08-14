@@ -79,6 +79,20 @@ class Framework{
 	}
 	
 	/**
+	 * Get the application name by ServerName
+	 *
+	 * @retrun airymvc\core\Application
+	 */
+	public static function appName($serverName) {
+		foreach (Framework::$apps as $app) {
+			if ($app->serverName() == $serverName) {
+				return $app->name();
+			}
+		}
+		return NULL;
+	}
+	
+	/**
 	 * Set the application object
 	 *
 	 * @param airymvc\core\Application $app

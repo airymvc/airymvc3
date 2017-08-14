@@ -38,7 +38,10 @@ class Route{
 		$runMvc = NULL;
 		//get the match URI
 		foreach (Route::routingTable() as $route => $mvc) {
-			$pos = strpos($request->requestURI(), $route);
+			$serverName = $request->serverName();
+			$app = Framework::appName($serverName);
+			$appRequestURI = $app.$request->requestURI();
+			$pos = strpos($appRequestURI, $route);
 			if ($pos !== FALSE && $pos == 0) {
 				$runMvc = $mvc;
 				$matchRoute = $route;
