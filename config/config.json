@@ -16,8 +16,15 @@
         },
         {
             "rtshm":[
-                "ubu00.shm",
+                "ubu01.shm",
                 "/var/www/rtshm",
+                "/"
+            ]
+        },
+        {
+            "iot-cloud":[
+                "ubu01.iot",
+                "/var/www/iot-cloud",
                 "/"
             ]
         }
