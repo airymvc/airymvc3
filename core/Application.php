@@ -44,6 +44,8 @@ class Application{
      		$this->appConfigFile($appConfigFile1);
      	} else if (file_exists($appConfigFile2)) {
      		$this->appConfigFile($appConfigFile2);
+     	} else {
+     		error_log("No application specific log file for {$name}. May use framework's instead.");
      	}
      }
      
