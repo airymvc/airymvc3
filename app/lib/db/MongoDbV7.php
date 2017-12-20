@@ -104,6 +104,12 @@ class MongoDbV7 implements DbInterface {
 	protected $lastInsertId;
 	
 	/**
+	 * Determine if adding _idString during insert. If NOT, query result will add _idString.
+	 * @var string $hasIdString
+	 */
+	protected $hasIdString;
+	
+	/**
 	 * @param string $key
 	 * @return string|array
 	 */
@@ -139,6 +145,16 @@ class MongoDbV7 implements DbInterface {
 
     	$this->setDbConfig($this->dbConfig);
     	$this->setConnection();
+    	if (isset($this->dbConfig['%insert_idstring'])) {
+    		if ($this->dbConfig['%insert_idstring'] == 'true' || $this->dbConfig['%insert_idstring'] == true || $this->dbConfig['%insert_idstring'] == 1) {
+    			$this->hasIdString = true;
+    		} else {
+    			$this->hasIdString = false;
+    		}
+    	} else {
+    		//default is false;
+    		$this->hasIdString = false;
+    	}
     }
     
     /**
@@ -400,7 +416,11 @@ class MongoDbV7 implements DbInterface {
     	if ($directly) {
     		$namespace = $this->database . "." . $collection;
     		$bulk = new \MongoDB\Driver\BulkWrite;
-    		$document['_id'] = new \MongoDB\BSON\ObjectID;
+    		$mongoDbObjectId = new \MongoDB\BSON\ObjectID;
+    		$document['_id'] = $mongoDbObjectId;
+    		if ($this->hasIdString) {
+    			$document['_idString'] = $mongoDbObjectId->__toString();
+    		}
     		$bulk->insert($document);
     		$this->lastInsertId = $document['_id']->__toString();
     		$this->mongoClient->executeBulkWrite($namespace, $bulk);
@@ -526,6 +546,9 @@ class MongoDbV7 implements DbInterface {
             	$bulk = new \MongoDB\Driver\BulkWrite;
             	$doc = $this->insertPart;
             	$doc['_id'] = new \MongoDB\BSON\ObjectID;
+            	if ($this->hasIdString) {
+            		$doc['_idString'] = $doc['_id']->__toString();
+            	}
             	$bulk->insert($doc);
             	$this->lastInsertId = $doc['_id']->__toString();
             	$this->mongoClient->executeBulkWrite($namespace, $bulk);
@@ -613,7 +636,9 @@ class MongoDbV7 implements DbInterface {
     		unset($props["_id"]);
     		$convertedArray = json_decode(json_encode($props), TRUE);
     		$convertedArray["_id"] = $idObj;
-    		$convertedArray["_idString"] = $idObj->__toString();
+    		if (!$this->hasIdString) {
+    			$convertedArray["_idString"] = $idObj->__toString();
+    		}
     		$result[$idx] = $convertedArray;
     	}
     	

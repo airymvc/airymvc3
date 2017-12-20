@@ -104,6 +104,12 @@ class MongoDb implements DbInterface {
 	protected $lastInsertId;
 	
 	/**
+	 * Determine if adding _idString during insert. If NOT, query result will add _idString.
+	 * @var string $hasIdString 
+	 */
+	protected $hasIdString;
+	
+	/**
 	 * @param string $key
 	 * @return string|array
 	 */
@@ -139,6 +145,16 @@ class MongoDb implements DbInterface {
 
     	$this->setDbConfig($this->dbConfig);
     	$this->setConnection();
+    	if (isset($this->dbConfig['%insert_idstring'])) {
+    		if ($this->dbConfig['%insert_idstring'] == 'true' || $this->dbConfig['%insert_idstring'] == true || $this->dbConfig['%insert_idstring'] == 1) {
+    			$this->hasIdString = true;
+    		} else {
+    			$this->hasIdString = false;
+    		}
+    	} else {
+    		//default is false;
+    		$this->hasIdString = false;
+    	}
     }
     
     /**
@@ -411,9 +427,19 @@ class MongoDb implements DbInterface {
     	if ($directly) {
     		$dbConnection = $this->database->$collection;
     		if (is_null($options)) {
-    			return $dbConnection->insert($document);
+    			$dbConnection->insert($document);
+    			$this->lastInsertId = $document['_id'];
+    			if ($this->hasIdString) {
+    				$dbConnection->update(array("_id" => new \MongoId($this->lastInsertId)), array("_idString" => $this->lastInsertId));
+    			}
+    			return $this->lastInsertId;
     		}
-    		return $dbConnection->insert($document, $options);
+    		$dbConnection->insert($document, $options);
+    		$this->lastInsertId = $document['_id'];
+    		if ($this->hasIdString) {
+    			$dbConnection->update(array("_id" => new \MongoId($this->lastInsertId)), array("_idString" => $this->lastInsertId));
+    		}
+    		return $this->lastInsertId; 
     	}
     	//Compatiable part
     	$this->queryType = "INSERT";
@@ -518,7 +544,9 @@ class MongoDb implements DbInterface {
             	$returnArray = array();
 
                 if ($useFineOne) {
-                    $queryResult["_idString"] = $queryResult["_id"]->__toString();
+                	if (!$this->hasIdString) {
+                    	$queryResult["_idString"] = $queryResult["_id"]->__toString();
+                	}
                     $returnArray[] = $queryResult;
                     return $returnArray;
                 }
@@ -530,11 +558,15 @@ class MongoDb implements DbInterface {
             	 */
             	foreach ($queryResult as $doc) {
             		if ($option == self::BOTH_INDEX_KEY_STRING || $option == self::INDEX) {
-            			$doc["_idString"] = $doc["_id"]->__toString();
+            			if (!$this->hasIdString) {
+            				$doc["_idString"] = $doc["_id"]->__toString();
+            			}
             			$returnArray[] = $doc;
             		}
             		if ($option == self::BOTH_INDEX_KEY_STRING || $option == self::KEY_STRING) {
-            			$returnArray[$doc["_id"]->__toString()] = $doc;
+            			if (!$this->hasIdString) {
+            				$returnArray[$doc["_id"]->__toString()] = $doc;
+            			}
             		}
             	}
             	return $returnArray;
@@ -546,9 +578,12 @@ class MongoDb implements DbInterface {
             case "INSERT":
             	if ($this->database->$table->insert($this->insertPart)) {
             		$this->lastInsertId = $this->insertPart['_id'];
+            		if ($this->hasIdString) {
+            			$this->database->$table->update(array("_id" => new \MongoId($this->lastInsertId)), array("_idString" => $this->lastInsertId));
+            		}
             		return $this->insertPart['_id'];
             	} else {
-            		$this->database->$table->insert($this->insertPart);
+            		return false;
             	}
                 break;
             case "DELETE":
