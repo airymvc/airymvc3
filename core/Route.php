@@ -9,6 +9,8 @@
 
 namespace airymvc\core;
 
+require_once __AIRYMVC_ROOT__ . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Application.php';
+require_once __AIRYMVC_ROOT__ . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'AiryException.php';
 use airymvc\core\AiryException;
 use airymvc\core\Application;
 

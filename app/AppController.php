@@ -8,6 +8,10 @@
  */
 namespace airymvc\app;
 
+require_once __AIRYMVC_ROOT__ . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Framework.php';
+require_once __AIRYMVC_ROOT__ . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Application.php';
+require_once __AIRYMVC_ROOT__ . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Mvc.php';
+require_once __AIRYMVC_ROOT__ . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'lib'. DIRECTORY_SEPARATOR . 'view'. DIRECTORY_SEPARATOR . 'AppSubView.php';
 use airymvc\core\Framework;
 use airymvc\core\Application;
 use airymvc\core\Mvc;

@@ -9,6 +9,8 @@
 
 namespace airymvc\app\lib\view;
 
+require_once __AIRYMVC_ROOT__ . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'AppView.php';
+require_once __AIRYMVC_ROOT__ . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Mvc.php';
 use airymvc\app\AppView;
 use airymvc\core\Mvc;
 

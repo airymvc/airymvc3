@@ -9,6 +9,7 @@
  
 namespace airymvc\app\lib\db;
 
+require_once __AIRYMVC_ROOT__ . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Config.php';
 use airymvc\core\Config;
 
  

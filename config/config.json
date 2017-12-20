@@ -27,6 +27,13 @@
                 "/var/www/iot-cloud",
                 "/"
             ]
+        },
+        {
+            "iot-cloud2":[
+                "ubu01.iot2",
+                "/var/www/iot-cloud2/server",
+                "/"
+            ]
         }
     ],
     "%routes":{

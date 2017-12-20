@@ -8,6 +8,8 @@
  */
 namespace airymvc\app\lib\view;
 
+require_once __AIRYMVC_ROOT__ . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Mvc.php';
+require_once __AIRYMVC_ROOT__ . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Route.php';
 use airymvc\core\Mvc;
 use airymvc\core\Route;
 /**

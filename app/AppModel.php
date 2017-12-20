@@ -8,6 +8,14 @@
  */
 namespace airymvc\app;
 
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Application.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Config.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Mvc.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'lib'. DIRECTORY_SEPARATOR .'db'. DIRECTORY_SEPARATOR .'SqlDb.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'lib'. DIRECTORY_SEPARATOR .'db'. DIRECTORY_SEPARATOR .'MongoDb.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'lib'. DIRECTORY_SEPARATOR .'db'. DIRECTORY_SEPARATOR .'MongoDbV7.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'lib'. DIRECTORY_SEPARATOR .'db'. DIRECTORY_SEPARATOR .'SqlDbCopyFarm.php';
+
 use airymvc\core\Application;
 use airymvc\core\Config;
 use airymvc\core\Mvc;

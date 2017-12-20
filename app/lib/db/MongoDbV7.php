@@ -8,6 +8,7 @@
  */
 namespace airymvc\app\lib\db;
 
+require_once __AIRYMVC_ROOT__ . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'db' .DIRECTORY_SEPARATOR . 'DbInterface.php';
 use airymvc\app\lib\db\DbInterface;
 
 /**
