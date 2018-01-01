@@ -39,6 +39,9 @@ class Application{
      	//set application config file 
      	$appConfigFile1 = $this->documentRoot . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "config.json";
      	$appConfigFile2 = $this->documentRoot . DIRECTORY_SEPARATOR . "config.json";
+     	
+     	error_log($appConfigFile1);
+     	error_log($appConfigFile2);
 
      	if (file_exists($appConfigFile1)) {
      		$this->appConfigFile($appConfigFile1);

@@ -43,6 +43,7 @@ class Bootstrap {
 		$apps = array();
 		$allAppRoutes = array();
 		$allAppRoutesNoOverwritten = array();
+
 		foreach ($configArray['%applications'] as $application) {
 			$keys = array_keys($application);
 			$names[] = $keys[0];
@@ -81,17 +82,18 @@ class Bootstrap {
 			$app->setConfig($finalAppConfigArray);
 			$apps[$keys[0]] = $app;
 			
-			
 			//Get all routes from application specific config
+			$appRoutePrefix = isset($appSpecificConfigArray["%route_prefix"]) ? $appSpecificConfigArray["%route_prefix"] : "";
+	
 			if (isset($appSpecificConfigArray["%routes"])) {
 				foreach ($appSpecificConfigArray["%routes"] as $route => $appRoute) {
-					if (isset($allAppRoutesNoOverwritten[$route])) {
-						$existAppNames = $allAppRoutesNoOverwritten[$route]['application'];
+					if (isset($allAppRoutesNoOverwritten[$appRoutePrefix.$route])) {
+						$existAppNames = $allAppRoutesNoOverwritten[$appRoutePrefix.$route]['application'];
 						$existAppNames[] = $appRoute[0];
-						$allAppRoutesNoOverwritten[$route]['application'] = $existAppNames;
-						$allAppRoutesNoOverwritten[$route]['path'][$appRoute[0]] = $appRoute;
+						$allAppRoutesNoOverwritten[$appRoutePrefix.$route]['application'] = $existAppNames;
+						$allAppRoutesNoOverwritten[$appRoutePrefix.$route]['path'][$appRoute[0]] = $appRoute;
 					} else {
-						$allAppRoutesNoOverwritten[$route] = array("application" => array($appRoute[0]), 
+						$allAppRoutesNoOverwritten[$appRoutePrefix.$route] = array("application" => array($appRoute[0]), 
 								                                   "path"=> array($appRoute[0] => $appRoute)
 						                                          );
 					}
@@ -126,6 +128,8 @@ class Bootstrap {
 						);
 				}
 			}
+			
+			//var_dump($allAppRoutesNoOverwritten);
 
 			if (!empty($allAppRoutesNoOverwritten)) {
 				foreach ($allAppRoutesNoOverwritten as $route => $routeInfo) {
@@ -173,7 +177,7 @@ class Bootstrap {
 		//var_dump(Route::$routingTable);
 		//var_dump(Route::$routingParams);
 
-		include "AutoLoader.php";
+		include "../../airymvc/core/AutoLoader.php";
 
     }
     
