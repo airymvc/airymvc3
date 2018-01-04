@@ -177,7 +177,7 @@ class Bootstrap {
 		//var_dump(Route::$routingTable);
 		//var_dump(Route::$routingParams);
 
-		include "../../airymvc/core/AutoLoader.php";
+		include "AutoLoader.php";
 
     }
     
