@@ -45,9 +45,14 @@ class Route{
 			$appRequestURI = $app.$request->requestURI();
 			$pos = strpos($appRequestURI, $route);
 			if ($pos !== FALSE && $pos == 0) {
-				$runMvc = $mvc;
-				$matchRoute = $route;
-				break;
+				$checkAppRequestURI = str_replace($route, "", $appRequestURI);
+				if (substr($checkAppRequestURI, 0, 1) == "" || 
+					substr($checkAppRequestURI, 0, 1) == "?" || 
+					substr($checkAppRequestURI, 0, 1) == "/") {
+					$runMvc = $mvc;
+					$matchRoute = $route;
+					break;
+				}
 			}
 		}
 
