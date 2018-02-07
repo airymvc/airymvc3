@@ -36,9 +36,34 @@ class Application{
      	$this->setDocumentRoot($documentRoot);
      	$this->setRelativePath($path);
      	
+     	//setup application map file
+     	$appConfigMapFile = null;
+     	$appEnv = "dev";
+     	$appConfigMapFile1 = $this->documentRoot . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "config.map.json";
+     	$appConfigMapFile2 = $this->documentRoot . DIRECTORY_SEPARATOR . "config.map.json";
+     	
+     	if (file_exists($appConfigMapFile1)) {
+     		$appConfigMapFile = $appConfigFile1;
+     	} else if (file_exists($appConfigMapFile2)) {
+     		$appConfigMapFile = $appConfigMapFile2;
+     	} else if (file_exists(Framework::configMapFile())) {
+     		$appConfigMapFile = Framework::configMapFile();
+     		error_log("No application specific config.map.json file for {$name}. Use framework's config.map.json instead.");
+     	} else {
+     		error_log("Missing the config.map.json file for application and framework. Environment will be assumed to use dev so it will be config.dev.json file.");
+     	}
+     	
+     	//determine environment based on $appConfigMapFile
+     	$envArray = json_decode(file_get_contents($appConfigMapFile ), true);
+     	foreach ($envArray['%env_map'] as $envElem) {
+     		if ($envElem["%server_name"] == Framework::getServerName()) {
+     			$env = $envElem["%env"];
+     		}
+     	}
+     	
      	//set application config file 
-     	$appConfigFile1 = $this->documentRoot . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "config.json";
-     	$appConfigFile2 = $this->documentRoot . DIRECTORY_SEPARATOR . "config.json";
+     	$appConfigFile1 = $this->documentRoot . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "config.{$env}.json";
+     	$appConfigFile2 = $this->documentRoot . DIRECTORY_SEPARATOR . "config.{$env}.json";
      	
      	error_log($appConfigFile1);
      	error_log($appConfigFile2);

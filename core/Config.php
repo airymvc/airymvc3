@@ -10,12 +10,12 @@
 namespace airymvc\core;
 
 /**
- * This class retrieves all the config.json values and save in an object.
+ * This class retrieves all the config.{envirionment}.json values and save in an object.
  *
  * @package airymvc\core\Config
  * @license New BSD license - at this URL: http://opensource.org/licenses/BSD-3-Clause
  * 
- * @see airymvc/config/config.json
+ * @see airymvc/config/config.{envirionment}.json
  */
 class Config{
 	

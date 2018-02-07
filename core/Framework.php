@@ -50,8 +50,34 @@ class Framework{
 	 *
 	 * @return string the config file path.
 	 */
-	public static function configFile() {
-		return Framework::configFolder() . DIRECTORY_SEPARATOR . "config.json";
+	public static function configFile($env = null) {
+		if ($env == null) {
+			$env = Framework::environment();
+		}
+		return Framework::configFolder() . DIRECTORY_SEPARATOR . "config.{$env}.json";
+	}
+	
+	/**
+	 * Get running environment
+	 */
+	public static function environment() {
+		$envArray = json_decode(file_get_contents(Framework::configMapFile()), true);
+		$env = "dev";
+		foreach ($envArray['%env_map'] as $envElem) {
+			if ($envElem["%server_name"] == Framework::getServerName()) {
+				$env = $envElem["%env"];
+			}
+		}
+		return $env;
+	}
+	
+	/**
+	 * Get the path of the airymvc config map file.
+	 *
+	 * @return string the config map file path.
+	 */
+	public static function configMapFile() {
+		return Framework::configFolder() . DIRECTORY_SEPARATOR . "config.map.json";
 	}
 	
 	/**
@@ -99,6 +125,14 @@ class Framework{
 	 */
 	public static function setApp($app) {
 		Framework::$apps[$app->name()] = $app;
+	}
+	
+	/**
+	 * Get the app running server name 
+	 */
+	public static function getServerName() {
+		exec("uname -n", $out);
+		return $out[0];
 	}
 }
 ?>
