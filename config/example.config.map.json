@@ -1,0 +1,20 @@
+{
+ "%env_map" : [
+          	   {
+          	    "%server_name": "p-def",
+          	    "%env": "production"
+          	   },
+          	   {
+          	    "%server_name": "p-adc",
+          	    "%env": "production"
+          	   },
+          	   {
+          	    "%server_name": "abc",
+          	    "%env": "dev"
+          	   },  
+          	   {
+          	    "%server_name": "def",
+          	    "%env": "dev"
+          	   }       	   
+ 		      ]
+}
