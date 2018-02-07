@@ -62,11 +62,11 @@ class Dispatch{
       
 	        //init method acts as a constructor after all the variables being set
 	        self::$runController->init();
-	
+
 	        if (method_exists(self::$runController, $action)) {
 	        	self::$runController->$action();
 	        } else {
-				throw AiryException("AiryMVC: Missing Action Function.");
+				throw new AiryException("AiryMVC: Missing Action Function - " . $action . " in controller - " . $controller);
 	        }
 	        return self::$runController;
 	
