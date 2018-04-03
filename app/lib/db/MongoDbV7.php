@@ -381,7 +381,7 @@ class MongoDbV7 implements DbInterface {
  	 */
     public function delete($collection, $where = NULL, $options = NULL) {
     	if (is_null($where)) {
-			error_log("Missing the where part!");
+			error_log("WARNING: Do not pass the WHERE part need to make sure calling where() later!");
     	} else {
     		$namespace = $this->database . "." . $collection;
             $bulk = new \MongoDB\Driver\BulkWrite;
