@@ -6,6 +6,27 @@
                 "/var/www/airy3_test1",
                 "/"
             ]
+        },
+        {
+            "rtshm":[
+                "ubu01.shm",
+                "/var/www/rtshm/server/app",
+                "/"
+            ]
+        },
+        {
+            "rtshm2":[
+                "ubu01.shm2",
+                "/var/www/rtshm2",
+                "/"
+            ]
+        },
+        {
+            "iot-cloud":[
+                "ubu01.iot",
+                "/var/www/iot-cloud/server/app",
+                "/"
+            ]
         }
     ],
     "%routes":{
@@ -25,7 +46,6 @@
     "%application_configs":[
         {
             "%name":"airy3_test1",
-            "%db_mode":"copy",
             "%db":[
                 {
                     "%database":"demo0",

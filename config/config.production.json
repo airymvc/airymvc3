@@ -1,9 +1,23 @@
 {
-    "%applications":[
+"%applications":[
         {
-            "airy3_test1":[
-                "ubu00.airy3_test1",
-                "/var/www/airy3_test1",
+            "rtshm":[
+                "rtshm.linkdynamic.com",
+                "/var/www/rtshm",
+                "/"
+            ]
+        },
+        {
+            "iot-cloud":[
+                "iot.zygozu.com",
+                "/var/www/iot-cloud/server/app",
+                "/"
+            ]
+        },
+        {
+            "rt-iot":[
+                "ubu01.rtiot",
+                "/var/www/rt-iot/server/app",
                 "/"
             ]
         }
@@ -24,16 +38,15 @@
     },
     "%application_configs":[
         {
-            "%name":"airy3_test1",
-            "%db_mode":"copy",
+            "%name":"rtshm",
             "%db":[
                 {
-                    "%database":"demo0",
-                    "%type":"mysql",
+                    "%database":"rtshm",
+                    "%type":"mongo",
                     "%encoding":"utf8",
-                    "%host":"localhost:3306",
-                    "%id":"root",
-                    "%pwd":"root"
+                    "%host":"localhost:27017",
+                    "%id":"admin",
+                    "%pwd":"rootadmin"
                 }
             ],
             "%display_error":"disable",

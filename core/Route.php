@@ -39,6 +39,7 @@ class Route{
 		$matchRoute = NULL;
 		$runMvc = NULL;
 		//get the match URI
+		error_log(print_r(Route::routingTable(), true), 0);
 		foreach (Route::routingTable() as $route => $mvc) {
 			$serverName = $request->serverName();
 			$app = Framework::appName($serverName);
@@ -99,7 +100,8 @@ class Route{
 			     }
 				
 			}
-
+			//error_log(print_r($runMvc, true), 0);
+			//error_log(print_r($request, true), 0);
 			return array("mvc" => $runMvc, "request"=> $request);
 		} 
 

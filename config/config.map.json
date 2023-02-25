@@ -1,19 +1,19 @@
 {
  "%env_map" : [
           	   {
-          	    "%server_name": "p-def",
+          	    "%server_name": "rt-iot.linkdynamic.com",
           	    "%env": "production"
           	   },
           	   {
-          	    "%server_name": "p-adc",
-          	    "%env": "production"
-          	   },
-          	   {
-          	    "%server_name": "abc",
+          	    "%server_name": "ubdev.rtiot",
           	    "%env": "dev"
           	   },  
           	   {
-          	    "%server_name": "def",
+          	    "%server_name": "ubdev.rt-iot",
+          	    "%env": "dev"
+          	   },  
+          	   {
+          	    "%server_name": "vagrant",
           	    "%env": "dev"
           	   }       	   
  		      ]

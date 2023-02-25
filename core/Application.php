@@ -43,7 +43,7 @@ class Application{
      	$appConfigMapFile2 = $this->documentRoot . DIRECTORY_SEPARATOR . "config.map.json";
      	
      	if (file_exists($appConfigMapFile1)) {
-     		$appConfigMapFile = $appConfigFile1;
+     	    $appConfigMapFile = $appConfigMapFile1;
      	} else if (file_exists($appConfigMapFile2)) {
      		$appConfigMapFile = $appConfigMapFile2;
      	} else if (file_exists(Framework::configMapFile())) {
@@ -59,6 +59,10 @@ class Application{
      		if ($envElem["%server_name"] == Framework::getServerName()) {
      			$env = $envElem["%env"];
      		}
+     	}
+     	
+     	if ($env == "" || $env == null) {
+     	    $env = $appEnv;
      	}
      	
      	//set application config file 

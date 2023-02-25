@@ -1,9 +1,9 @@
 {
     "%applications":[
         {
-            "airy3_test1":[
-                "ubu00.airy3_test1",
-                "/var/www/airy3_test1",
+            "rt-iot":[
+                "ubdev.rt-iot",
+                "/var/www/rt-iot/server/app",
                 "/"
             ]
         }
@@ -25,7 +25,6 @@
     "%application_configs":[
         {
             "%name":"airy3_test1",
-            "%db_mode":"copy",
             "%db":[
                 {
                     "%database":"demo0",

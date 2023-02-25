@@ -43,6 +43,8 @@ class Bootstrap {
 		$apps = array();
 		$allAppRoutes = array();
 		$allAppRoutesNoOverwritten = array();
+		
+		error_log(print_r($configArray, true), 0);
 
 		foreach ($configArray['%applications'] as $application) {
 			$keys = array_keys($application);
@@ -55,7 +57,11 @@ class Bootstrap {
 			if (substr($appSettings[2], 0, 1) != "/") {
 				$pathName .= $appSettings[2];
 			}
+			error_log(print_r($keys[0], true), 0);
+			
 			$app = new Application($keys[0], $serverName, $docRoot, $pathName);
+			error_log("initializing app", 0);
+			error_log(print_r($app, true), 0);
 			
 			//** Get the application's application config
 			$appSpecificConfigArray = NULL;
@@ -81,6 +87,9 @@ class Bootstrap {
 			
 			$app->setConfig($finalAppConfigArray);
 			$apps[$keys[0]] = $app;
+			
+			error_log("app set config.............", 0);
+			error_log(print_r($app, true), 0);
 			
 			//Get all routes from application specific config
 			$appRoutePrefix = isset($appSpecificConfigArray["%route_prefix"]) ? $appSpecificConfigArray["%route_prefix"] : "";
@@ -111,7 +120,8 @@ class Bootstrap {
 		$routeParams = array();
 		
 		//var_dump($allAppRoutesNoOverwritten);
-		//error_log(print_r($allAppRoutes, true));
+		error_log("Show allAppRouts.......", 0);
+		error_log(print_r($allAppRoutes, true), 0);
 		
 		$allRoutes = array();
 		if (isset($configArray['%routes'])) {
@@ -153,6 +163,10 @@ class Bootstrap {
 			
 			//var_dump($allRoutes);
 			//var_dump($apps);
+			error_log("printing routes.........", 0);
+			error_log(print_r($allRoutes, true), 0);
+			error_log("printing apps.....", 0);
+			error_log(print_r($apps, true), 0);
 			
 			foreach ($allRoutes as $routeUrl => $allRouteVar) {
 				foreach ($allRouteVar['application'] as $appName) {
